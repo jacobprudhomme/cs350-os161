@@ -504,6 +504,7 @@ static const char *mainmenu[] = {
 	"[sp3] Traffic                       ",
 #endif /* UW */
 #endif
+	"[dth] Show thread debug messages    ",
 	"[kh] Kernel heap stats              ",
 	"[q] Quit and shut down              ",
 	NULL
@@ -517,6 +518,21 @@ cmd_mainmenu(int n, char **a)
 	(void)a;
 
 	showmenu("OS/161 kernel menu", mainmenu);
+	return 0;
+}
+
+////////////////////////////////////////
+//
+// User-added commands
+
+static
+int
+showthreaddb(int n, char **a)
+{
+	(void)n;
+	(void)a;
+
+	dbflags = 0x0010;
 	return 0;
 }
 
@@ -549,6 +565,9 @@ static struct {
 	{ "q",		cmd_quit },
 	{ "exit",	cmd_quit },
 	{ "halt",	cmd_quit },
+
+	/* user-added operations */
+	{ "dth",	showthreaddb },
 
 #if OPT_SYNCHPROBS
 	/* in-kernel synchronization problem(s) */

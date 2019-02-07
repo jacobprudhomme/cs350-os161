@@ -191,9 +191,22 @@ lock_destroy(struct lock *lock)
 void
 lock_acquire(struct lock *lock)
 {
-        // Write this
+        KASSERT(lock != NULL);
+        KASSERT(lock->lk_owner != curthread);
 
-        (void)lock;  // suppress warning until code gets written
+        spinlock_acquire(&lock->lk_spin);
+
+        while (lock->lk_held) {
+            wchan_lock(lock->lk_wchan);
+            spinlock_release(&lock->lk_spin);
+            wchan_sleep(lock->lk_wchan);
+            spinlock_acquire(&lock->lk_spin);
+        }
+
+        lock->lk_owner = curthread;
+        lock->lk_held = true;
+
+        spinlock_release(&lock->lk_spin);
 }
 
 void

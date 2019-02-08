@@ -212,9 +212,17 @@ lock_acquire(struct lock *lock)
 void
 lock_release(struct lock *lock)
 {
-        // Write this
+        KASSERT(lock != NULL);
+        KASSERT(lock->lk_held);
+        KASSERT(lock->lk_owner == curthread);
 
-        (void)lock;  // suppress warning until code gets written
+        spinlock_acquire(&lock->lk_spin);
+
+        lock->lk_owner = null;
+        lock->lk_held = false;
+        wchan_wakeone(lock->lk_wchan);
+
+        spinlock_release(&lock->lk_spin);
 }
 
 bool

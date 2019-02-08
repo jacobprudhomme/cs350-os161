@@ -106,9 +106,18 @@ intersection_sync_init(void)
 void
 intersection_sync_cleanup(void)
 {
-  /* replace this default implementation with your own implementation */
-  KASSERT(intersectionSem != NULL);
-  sem_destroy(intersectionSem);
+  lock_destroy(NE);
+  lock_destroy(NS);
+  lock_destroy(NW);
+  lock_destroy(EN);
+  lock_destroy(ES);
+  lock_destroy(EW);
+  lock_destroy(SN);
+  lock_destroy(SE);
+  lock_destroy(SW);
+  lock_destroy(WN);
+  lock_destroy(WE);
+  lock_destroy(WS);
 }
 
 

@@ -165,9 +165,9 @@ lock_create(const char *name)
 
         lock->lk_wchan = wchan_create(lock->lk_name);
         if (lock->lk_wchan == NULL) {
-            kfree(lock->lk_name);
-            kfree(lock);
-            return NULL;
+                kfree(lock->lk_name);
+                kfree(lock);
+                return NULL;
         }
 
         spinlock_init(&lock->lk_spin);
@@ -197,10 +197,10 @@ lock_acquire(struct lock *lock)
         spinlock_acquire(&lock->lk_spin);
 
         while (lock->lk_held) {
-            wchan_lock(lock->lk_wchan);
-            spinlock_release(&lock->lk_spin);
-            wchan_sleep(lock->lk_wchan);
-            spinlock_acquire(&lock->lk_spin);
+                wchan_lock(lock->lk_wchan);
+                spinlock_release(&lock->lk_spin);
+                wchan_sleep(lock->lk_wchan);
+                spinlock_acquire(&lock->lk_spin);
         }
 
         lock->lk_owner = curthread;

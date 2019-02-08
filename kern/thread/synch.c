@@ -259,8 +259,6 @@ cv_create(const char *name)
                 return NULL;
         }
 
-        spinlock_init(&cv->cv_lock);
-
         return cv;
 }
 
@@ -269,7 +267,6 @@ cv_destroy(struct cv *cv)
 {
         KASSERT(cv != NULL);
 
-        spinlock_cleanup(&cv->cv_lock);
         wchan_destroy(cv->cv_wchan);
         kfree(cv->cv_name);
         kfree(cv);
@@ -282,14 +279,10 @@ cv_wait(struct cv *cv, struct lock *lock)
         KASSERT(lock != NULL);
         KASSERT(lock->lk_owner == curthread);
 
-        spinlock_acquire(&cv->cv_lock);
-
         wchan_lock(cv->cv_wchan);
         lock_release(lock);
         wchan_sleep(cv->cv_wchan);
         lock_acquire(lock);
-
-        spinlock_release(&cv->cv_lock);
 }
 
 void

@@ -227,9 +227,77 @@ intersection_before_entry(Direction origin, Direction destination)
 void
 intersection_after_exit(Direction origin, Direction destination)
 {
-  /* replace this default implementation with your own implementation */
-  (void)origin;  /* avoid compiler complaint about unused parameter */
-  (void)destination; /* avoid compiler complaint about unused parameter */
-  KASSERT(intersectionSem != NULL);
-  V(intersectionSem);
+  if (origin == north && destination == east) {
+    lock_release(ES);
+    lock_release(EW);
+    lock_release(SN);
+    lock_release(SE);
+    lock_release(SW);
+    lock_release(WN);
+    lock_release(WE);
+  } else if (origin == north && destination == south) {
+    lock_release(ES);
+    lock_release(EW);
+    lock_release(SW);
+    lock_release(WN);
+    lock_release(WE);
+    lock_release(WS);
+  } else if (origin == north && destination == west) {
+    lock_release(EW);
+    lock_release(SW);
+  } else if (origin == east && destination == north) {
+    lock_release(SN);
+    lock_release(WN);
+  } else if (origin == east && destination == south) {
+    lock_release(NE);
+    lock_release(NS);
+    lock_release(SN);
+    lock_release(SW);
+    lock_release(WN);
+    lock_release(WE);
+    lock_release(WS);
+  } else if (origin == east && destination == west) {
+    lock_release(NE);
+    lock_release(NS);
+    lock_release(NW);
+    lock_release(SN);
+    lock_release(SW);
+    lock_release(WN);
+  } else if (origin == south && destination == north) {
+    lock_release(NE);
+    lock_release(EN);
+    lock_release(ES);
+    lock_release(EW);
+    lock_release(WN);
+    lock_release(WE);
+  } else if (origin == south && destination == east) {
+    lock_release(NE);
+    lock_release(WE);
+  } else if (origin == south && destination == west) {
+    lock_release(NE);
+    lock_release(NS);
+    lock_release(NW);
+    lock_release(ES);
+    lock_release(EW);
+    lock_release(WN);
+    lock_release(WE);
+  } else if (origin == west && destination == north) {
+    lock_release(NE);
+    lock_release(NS);
+    lock_release(EN);
+    lock_release(ES);
+    lock_release(EW);
+    lock_release(SN);
+    lock_release(SW);
+  } else if (origin == west && destination == east) {
+    lock_release(NE);
+    lock_release(NS);
+    lock_release(ES);
+    lock_release(SN);
+    lock_release(SE);
+    lock_release(SW);
+  } else {
+    lock_release(NS);
+    lock_release(ES);
+  }
 }

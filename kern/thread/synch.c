@@ -171,7 +171,7 @@ lock_create(const char *name)
         }
 
         spinlock_init(&lock->lk_spin);
-        lock->lk_owner = null;
+        lock->lk_owner = NULL;
         lock->lk_held = false;
 
         return lock;
@@ -218,7 +218,7 @@ lock_release(struct lock *lock)
 
         spinlock_acquire(&lock->lk_spin);
 
-        lock->lk_owner = null;
+        lock->lk_owner = NULL;
         lock->lk_held = false;
         wchan_wakeone(lock->lk_wchan);
 

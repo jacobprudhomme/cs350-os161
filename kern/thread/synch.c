@@ -252,7 +252,14 @@ cv_create(const char *name)
                 return NULL;
         }
 
-        // add stuff here as needed
+        cv->cv_wchan = wchan_create(cv->cv_name);
+        if (cv->cv_name == NULL) {
+                kfree(cv->cv_name);
+                kfree(cv);
+                return NULL;
+        }
+
+        spinlock_init(&cv->cv_lock);
 
         return cv;
 }

@@ -137,11 +137,79 @@ intersection_sync_cleanup(void)
 void
 intersection_before_entry(Direction origin, Direction destination)
 {
-  /* replace this default implementation with your own implementation */
-  (void)origin;  /* avoid compiler complaint about unused parameter */
-  (void)destination; /* avoid compiler complaint about unused parameter */
-  KASSERT(intersectionSem != NULL);
-  P(intersectionSem);
+  if (origin == north && destination == east) {
+    lock_acquire(ES);
+    lock_acquire(EW);
+    lock_acquire(SN);
+    lock_acquire(SE);
+    lock_acquire(SW);
+    lock_acquire(WN);
+    lock_acquire(WE);
+  } else if (origin == north && destination == south) {
+    lock_acquire(ES);
+    lock_acquire(EW);
+    lock_acquire(SW);
+    lock_acquire(WN);
+    lock_acquire(WE);
+    lock_acquire(WS);
+  } else if (origin == north && destination == west) {
+    lock_acquire(EW);
+    lock_acquire(SW);
+  } else if (origin == east && destination == north) {
+    lock_acquire(SN);
+    lock_acquire(WN);
+  } else if (origin == east && destination == south) {
+    lock_acquire(NE);
+    lock_acquire(NS);
+    lock_acquire(SN);
+    lock_acquire(SW);
+    lock_acquire(WN);
+    lock_acquire(WE);
+    lock_acquire(WS);
+  } else if (origin == east && destination == west) {
+    lock_acquire(NE);
+    lock_acquire(NS);
+    lock_acquire(NW);
+    lock_acquire(SN);
+    lock_acquire(SW);
+    lock_acquire(WN);
+  } else if (origin == south && destination == north) {
+    lock_acquire(NE);
+    lock_acquire(EN);
+    lock_acquire(ES);
+    lock_acquire(EW);
+    lock_acquire(WN);
+    lock_acquire(WE);
+  } else if (origin == south && destination == east) {
+    lock_acquire(NE);
+    lock_acquire(WE);
+  } else if (origin == south && destination == west) {
+    lock_acquire(NE);
+    lock_acquire(NS);
+    lock_acquire(NW);
+    lock_acquire(ES);
+    lock_acquire(EW);
+    lock_acquire(WN);
+    lock_acquire(WE);
+  } else if (origin == west && destination == north) {
+    lock_acquire(NE);
+    lock_acquire(NS);
+    lock_acquire(EN);
+    lock_acquire(ES);
+    lock_acquire(EW);
+    lock_acquire(SN);
+    lock_acquire(SW);
+  } else if (origin == west && destination == east) {
+    lock_acquire(NE);
+    lock_acquire(NS);
+    lock_acquire(ES);
+    lock_acquire(SN);
+    lock_acquire(SE);
+    lock_acquire(SW);
+  } else {
+    lock_acquire(NS);
+    lock_acquire(ES);
+  }
 }
 
 

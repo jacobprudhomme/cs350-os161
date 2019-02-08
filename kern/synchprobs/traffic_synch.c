@@ -18,10 +18,10 @@
  * declare other global variables if your solution requires them.
  */
 
-static struct lock *NE, NS, NW,
-                    EN, ES, EW,
-                    SN, SE, SW,
-                    WN, WE, WS;
+static struct lock *NE, *NS, *NW,
+                   *EN, *ES, *EW,
+                   *SN, *SE, *SW,
+                   *WN, *WE, *WS;
 
 
 /*

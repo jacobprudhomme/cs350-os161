@@ -111,7 +111,7 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   struct addrspace *parent_as = curproc_getas();
   struct addrspace *child_as;
-  int result = as_copy(parent_as, &child_as);
+  result = as_copy(parent_as, &child_as);
   if (result) {
     proc_destroy(child_proc);
     DEBUG(DB_SYSCALL, "syscall: fork");

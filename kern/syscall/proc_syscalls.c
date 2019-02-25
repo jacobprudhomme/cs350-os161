@@ -94,6 +94,8 @@ sys_waitpid(pid_t pid,
 
 #if OPT_A2
 int sys_fork(struct trapframe *tf) {
+  int result = 0;
+
   struct proc *child_proc = proc_create_runprogram("Child Process");
   if (child_proc == NULL) {
     DEBUG(DB_SYSCALL, "syscall: fork");
@@ -102,10 +104,11 @@ int sys_fork(struct trapframe *tf) {
 
   struct addrspace *parent_as = curproc_getas();
   struct addrspace *child_as;
-  if (as_copy(parent_as, &child_as)) { /* MAYBE HERE (could this pose a problem?) */
+  int result = as_copy(parent_as, &child_as);
+  if (result) {
     proc_destroy(child_proc);
     DEBUG(DB_SYSCALL, "syscall: fork");
-    return ENOMEM;
+    return result;
   }
 
   child_proc->p_addrspace = child_as;

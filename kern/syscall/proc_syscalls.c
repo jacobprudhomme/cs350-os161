@@ -124,7 +124,7 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
     return result;
   }
 
-  *retval = child_proc->pid; // MAYBE HERE (should i be modifying v0 in the trapframe instead?)
+  *retval = child_proc->pid;
 
   return 0;
 }

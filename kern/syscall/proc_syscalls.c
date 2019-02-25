@@ -114,7 +114,9 @@ int sys_fork(struct trapframe *tf) {
   child_proc->p_addrspace = child_as;
   child_proc->p_parent = curproc;
 
-  result = thread_fork("Child Thread", child_proc, &enter_forked_process, (void *), (unsigned long));
+  struct trapframe *tf_copy;
+  memcpy(tf_copy, tf, sizeof(struct trapframe));
+  result = thread_fork("Child Thread", child_proc, &enter_forked_process, tf_copy, 0);
   if (result) {
     as_destroy(child_as);
     proc_destroy(child_proc);

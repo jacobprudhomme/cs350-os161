@@ -36,7 +36,6 @@
 #include <current.h>
 #include <syscall.h>
 
-
 /*
  * System call dispatcher.
  *
@@ -93,50 +92,52 @@ syscall(struct trapframe *tf)
 	 * really return a value, just 0 for success and -1 on
 	 * error. Since retval is the value returned on success,
 	 * initialize it to 0 by default; thus it's not necessary to
-	 * deal with it except for calls that return other values, 
+	 * deal with it except for calls that return other values,
 	 * like write.
 	 */
 
 	retval = 0;
 
 	switch (callno) {
-	    case SYS_reboot:
-		err = sys_reboot(tf->tf_a0);
-		break;
+	  case SYS_reboot:
+			err = sys_reboot(tf->tf_a0);
+			break;
 
-	    case SYS___time:
-		err = sys___time((userptr_t)tf->tf_a0,
-				 (userptr_t)tf->tf_a1);
-		break;
+	  case SYS___time:
+			err = sys___time((userptr_t)tf->tf_a0,
+					(userptr_t)tf->tf_a1);
+			break;
+
 #ifdef UW
-	case SYS_write:
-	  err = sys_write((int)tf->tf_a0,
-			  (userptr_t)tf->tf_a1,
-			  (int)tf->tf_a2,
-			  (int *)(&retval));
-	  break;
-	case SYS__exit:
-	  sys__exit((int)tf->tf_a0);
-	  /* sys__exit does not return, execution should not get here */
-	  panic("unexpected return from sys__exit");
-	  break;
-	case SYS_getpid:
-	  err = sys_getpid((pid_t *)&retval);
-	  break;
-	case SYS_waitpid:
-	  err = sys_waitpid((pid_t)tf->tf_a0,
+		case SYS_write:
+		  err = sys_write((int)tf->tf_a0,
+				  (userptr_t)tf->tf_a1,
+				  (int)tf->tf_a2,
+				  (int *)(&retval));
+		  break;
+
+		case SYS__exit:
+		  sys__exit((int)tf->tf_a0);
+		  /* sys__exit does not return, execution should not get here */
+		  panic("unexpected return from sys__exit");
+		  break;
+
+		case SYS_getpid:
+		  err = sys_getpid((pid_t *)&retval);
+		  break;
+
+		case SYS_waitpid:
+		  err = sys_waitpid((pid_t)tf->tf_a0,
 			    (userptr_t)tf->tf_a1,
 			    (int)tf->tf_a2,
 			    (pid_t *)&retval);
-	  break;
+		  break;
 #endif // UW
 
-	    /* Add stuff here */
- 
-	default:
-	  kprintf("Unknown syscall %d\n", callno);
-	  err = ENOSYS;
-	  break;
+		default:
+		  kprintf("Unknown syscall %d\n", callno);
+		  err = ENOSYS;
+		  break;
 	}
 
 
@@ -154,12 +155,12 @@ syscall(struct trapframe *tf)
 		tf->tf_v0 = retval;
 		tf->tf_a3 = 0;      /* signal no error */
 	}
-	
+
 	/*
 	 * Now, advance the program counter, to avoid restarting
 	 * the syscall over and over again.
 	 */
-	
+
 	tf->tf_epc += 4;
 
 	/* Make sure the syscall code didn't forget to lower spl */

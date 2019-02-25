@@ -113,6 +113,14 @@ int sys_fork(struct trapframe *tf) {
 
   child_proc->p_addrspace = child_as;
   child_proc->p_parent = curproc;
+
+  result = thread_fork("Child Thread", child_proc, &enter_forked_process, (void *), (unsigned long));
+  if (result) {
+    as_destroy(child_as);
+    proc_destroy(child_proc);
+    DEBUG(DB_SYSCALL, "syscall: fork");
+    return result;
+  }
 }
 #endif /* OPT_A2 */
 

@@ -101,7 +101,7 @@ int sys_fork(struct trapframe *tf) {
   }
 
   struct addrspace *child_as;
-  if (as_copy(curproc->p_addrspace, &child_as)) { /* MAYBE HERE */
+  if (as_copy(curproc_getas(), &child_as)) { /* MAYBE HERE */
     proc_destroy(child_proc);
     DEBUG(DB_SYSCALL, "syscall: fork");
     return ENOMEM;

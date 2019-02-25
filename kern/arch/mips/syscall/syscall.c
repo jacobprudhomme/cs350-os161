@@ -182,8 +182,8 @@ enter_forked_process(struct trapframe *tf) // MAYBE HERE (should sig be changed 
 	struct trapframe local_tf = *tf;
 	kfree(tf);
 
-	local_tf.v0 = 0;
-	local_tf.a3 = 0;
+	local_tf.tf_v0 = 0;
+	local_tf.tf_a3 = 0;
 	local_tf.tf_epc += 4;
 
 	mips_usermode(&local_tf);

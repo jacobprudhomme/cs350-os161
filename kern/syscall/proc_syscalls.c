@@ -93,7 +93,7 @@ sys_waitpid(pid_t pid,
 }
 
 #if OPT_A2
-int sys_fork(struct trapframe *tf) {
+int sys_fork(struct trapframe *tf, pid_t *retval) {
   int result = 0;
 
   struct proc *child_proc = proc_create_runprogram("Child Process");
@@ -123,6 +123,10 @@ int sys_fork(struct trapframe *tf) {
     DEBUG(DB_SYSCALL, "syscall: fork");
     return result;
   }
+
+  *retval = child_proc->pid; // MAYBE HERE (should i be modifying v0 in the trapframe instead?)
+
+  return 0;
 }
 #endif /* OPT_A2 */
 

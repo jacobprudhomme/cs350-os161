@@ -9,6 +9,7 @@
 #include <thread.h>
 #include <addrspace.h>
 #include <copyinout.h>
+#include "opt-A2.h"
 
   /* this implementation of sys__exit does not do anything with the exit code */
   /* this needs to be fixed to get exit() and waitpid() working properly */
@@ -48,6 +49,9 @@ void sys__exit(int exitcode) {
   panic("return from thread_exit in sys_exit\n");
 }
 
+#if OPT_A2
+pid_t fork(void) {}
+#endif /* OPT_A2 */
 
 /* stub handler for getpid() system call                */
 int

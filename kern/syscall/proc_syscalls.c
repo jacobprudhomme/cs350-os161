@@ -49,10 +49,6 @@ void sys__exit(int exitcode) {
   panic("return from thread_exit in sys_exit\n");
 }
 
-#if OPT_A2
-pid_t sys_fork(void) {}
-#endif /* OPT_A2 */
-
 /* stub handler for getpid() system call                */
 int
 sys_getpid(pid_t *retval)
@@ -95,4 +91,8 @@ sys_waitpid(pid_t pid,
   *retval = pid;
   return(0);
 }
+
+#if OPT_A2
+pid_t sys_fork(void) {}
+#endif /* OPT_A2 */
 

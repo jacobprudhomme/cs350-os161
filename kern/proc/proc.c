@@ -94,7 +94,7 @@ proc_create(const char *name)
 		kfree(proc);
 		return NULL;
 	}
-#if OPT_A2
+#if OPT_A2 // MAYBE HERE (should this be moved to proc_create_runprogram()?)
 	spinlock_acquire(&next_free_pid_spin);
 	proc->pid = next_free_pid;
 	next_free_pid++;

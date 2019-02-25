@@ -50,7 +50,7 @@ void sys__exit(int exitcode) {
 }
 
 #if OPT_A2
-pid_t fork(void) {}
+pid_t sys_fork(void) {}
 #endif /* OPT_A2 */
 
 /* stub handler for getpid() system call                */

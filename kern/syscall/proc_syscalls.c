@@ -49,6 +49,12 @@ void sys__exit(int exitcode) {
   panic("return from thread_exit in sys_exit\n");
 }
 
+#if OPT_A2
+int sys_getpid(pid_t *retval) {
+  *retval = curproc->pid;
+  return 0;
+}
+#else
 /* stub handler for getpid() system call                */
 int
 sys_getpid(pid_t *retval)
@@ -58,6 +64,7 @@ sys_getpid(pid_t *retval)
   *retval = 1;
   return(0);
 }
+#endif /* OPT_A2 */
 
 /* stub handler for waitpid() system call                */
 
@@ -126,11 +133,6 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   *retval = child_proc->pid;
 
-  return 0;
-}
-
-int sys_getpid(pid_t *retval) {
-  *retval = curproc->pid;
   return 0;
 }
 #endif /* OPT_A2 */

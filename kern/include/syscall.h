@@ -67,8 +67,7 @@ int sys_waitpid(pid_t pid, userptr_t status, int options, pid_t *retval);
 #endif // UW
 
 #if OPT_A2
-int sys_fork(struct trapframe *, pid_t *);
-int sys_getpid(pid_t *);
+int sys_fork(struct trapframe *tf, pid_t *retval);
 #endif /* OPT_A2 */
 
 #endif /* _SYSCALL_H_ */

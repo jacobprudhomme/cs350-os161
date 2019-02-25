@@ -107,6 +107,10 @@ int sys_fork(struct trapframe *tf) {
     DEBUG(DB_SYSCALL, "syscall: fork");
     return ENOMEM;
   }
+
+  spinlock_acquire(&child_proc->p_lock); /* MAYBE HERE (do i need this?) */
+  child_proc->p_addrspace = child_as;
+  spinlock_release(&child_proc->p_lock); /* MAYBE HERE (do i need this?) */
 }
 #endif /* OPT_A2 */
 

@@ -93,6 +93,6 @@ sys_waitpid(pid_t pid,
 }
 
 #if OPT_A2
-pid_t sys_fork(void) {}
+int sys_fork(struct trapframe *tf) {}
 #endif /* OPT_A2 */
 

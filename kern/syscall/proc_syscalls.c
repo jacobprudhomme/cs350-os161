@@ -99,6 +99,13 @@ int sys_fork(struct trapframe *tf) {
     DEBUG(DB_SYSCALL, "syscall: fork");
     return ENOMEM;
   }
+
+  struct addrspace *child_as;
+  if (as_copy(curproc->p_addrspace, &child_as)) { /* MAYBE HERE */
+    proc_destroy(child_proc);
+    DEBUG(DB_SYSCALL, "syscall: fork");
+    return ENOMEM;
+  }
 }
 #endif /* OPT_A2 */
 

@@ -35,6 +35,7 @@
 #include <thread.h>
 #include <current.h>
 #include <syscall.h>
+#include "opt-A2.h"
 
 /*
  * System call dispatcher.
@@ -169,16 +170,19 @@ syscall(struct trapframe *tf)
 	KASSERT(curthread->t_iplhigh_count == 0);
 }
 
-/*
- * Enter user mode for a newly forked process.
- *
- * This function is provided as a reminder. You need to write
- * both it and the code that calls it.
- *
- * Thus, you can trash it and do things another way if you prefer.
- */
 void
-enter_forked_process(struct trapframe *tf)
+enter_forked_process(struct trapframe *tf) // MAYBE HERE (should sig be changed to match pseudocode?)
 {
+#if OPT_A2
+	struct trapframe local_tf = *tf;
+	kfree(tf);
+
+	local_tf.v0 = 0;
+	local_tf.a3 = 0;
+	local_tf.tf_epc += 4;
+
+	mips_usermode(&local_tf);
+#else
 	(void)tf;
+#endif /* OPT_A2 */
 }

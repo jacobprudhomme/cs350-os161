@@ -129,6 +129,9 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
   return 0;
 }
 
-int sys_getpid(pid_t *retval) {}
+int sys_getpid(pid_t *retval) {
+  *retval = curproc->pid;
+  return 0;
+}
 #endif /* OPT_A2 */
 

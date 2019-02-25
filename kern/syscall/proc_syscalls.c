@@ -93,6 +93,12 @@ sys_waitpid(pid_t pid,
 }
 
 #if OPT_A2
-int sys_fork(struct trapframe *tf) {}
+int sys_fork(struct trapframe *tf) {
+  struct proc *child_proc = proc_create_runprogram("Child Process");
+  if (child_proc == NULL) {
+    DEBUG(DB_SYSCALL, "syscall: fork");
+    return ENOMEM;
+  }
+}
 #endif /* OPT_A2 */
 

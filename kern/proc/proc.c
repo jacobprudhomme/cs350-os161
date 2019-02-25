@@ -94,14 +94,6 @@ proc_create(const char *name)
 		kfree(proc);
 		return NULL;
 	}
-#if OPT_A2 // MAYBE HERE (should this be moved to proc_create_runprogram()?)
-	spinlock_acquire(&next_free_pid_lock);
-	proc->pid = next_free_pid;
-	next_free_pid++;
-	spinlock_release(&next_free_pid_lock);
-
-	proc->p_parent = NULL;
-#endif /* OPT_A2 */
 
 	threadarray_init(&proc->p_threads);
 	spinlock_init(&proc->p_lock);
@@ -241,6 +233,15 @@ proc_create_runprogram(const char *name)
 	if (proc == NULL) {
 		return NULL;
 	}
+
+#if OPT_A2
+	spinlock_acquire(&next_free_pid_lock);
+	proc->pid = next_free_pid;
+	next_free_pid++;
+	spinlock_release(&next_free_pid_lock);
+
+	proc->p_parent = NULL;
+#endif /* OPT_A2 */
 
 #ifdef UW
 	/* open the console - this should always succeed */

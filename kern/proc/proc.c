@@ -94,6 +94,12 @@ proc_create(const char *name)
 		kfree(proc);
 		return NULL;
 	}
+#if OPT_A2
+	spinlock_acquire(&next_free_pid_spin);
+	proc->pid = next_free_pid;
+	next_free_pid++;
+	spinlock_release(&next_free_pid_spin);
+#endif /* OPT_A2 */
 
 	threadarray_init(&proc->p_threads);
 	spinlock_init(&proc->p_lock);

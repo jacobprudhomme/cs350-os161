@@ -53,6 +53,7 @@ struct proc {
 	char *p_name;			/* Name of this process */
 #if OPT_A2
   pid_t pid;
+  struct proc *p_parent;
 #endif /* OPT_A2 */
 	struct spinlock p_lock;		/* Lock for this structure */
 	struct threadarray p_threads;	/* Threads in this process */

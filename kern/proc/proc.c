@@ -99,6 +99,8 @@ proc_create(const char *name)
 	proc->pid = next_free_pid;
 	next_free_pid++;
 	spinlock_release(&next_free_pid_spin);
+
+	proc->p_parent = NULL;
 #endif /* OPT_A2 */
 
 	threadarray_init(&proc->p_threads);

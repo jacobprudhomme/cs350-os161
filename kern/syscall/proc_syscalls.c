@@ -49,6 +49,12 @@ void sys__exit(int exitcode) {
   p->p_exited = true;
   p->p_exitcode = exitcode;
 
+  unsigned num_children = array_num(p->p_children);
+  for (unsigned i = 0; i < num_children; i++) {
+    struct proc *child = (struct proc *)array_get(p->p_children, i);
+    child->p_parent = NULL;
+  }
+
   if (p->p_parent) {
     spinlock_release(&p->p_lock);
   } else {

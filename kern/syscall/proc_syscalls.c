@@ -12,16 +12,18 @@
 #include <mips/trapframe.h>
 #include "opt-A2.h"
 
-  /* this implementation of sys__exit does not do anything with the exit code */
-  /* this needs to be fixed to get exit() and waitpid() working properly */
-
+/* this implementation of sys__exit does not do anything with the exit code */
+/* this needs to be fixed to get exit() and waitpid() working properly */
 void sys__exit(int exitcode) {
-
   struct addrspace *as;
   struct proc *p = curproc;
+
+#if OPT_A2
+#else
   /* for now, just include this to keep the compiler from complaining about
      an unused variable */
   (void)exitcode;
+#endif /* OPT_A2 */
 
   DEBUG(DB_SYSCALL,"Syscall: _exit(%d)\n",exitcode);
 
@@ -41,11 +43,21 @@ void sys__exit(int exitcode) {
   /* note: curproc cannot be used after this call */
   proc_remthread(curthread);
 
+#if OPT_A2
+  p->p_exited = true;
+  p->p_exitcode = exitcode;
+
+  if (!p->p_parent) {
+    proc_destroy(p);
+  }
+#else
   /* if this is the last user process in the system, proc_destroy()
      will wake up the kernel menu thread */
   proc_destroy(p);
+#endif /* OPT_A2 */
 
   thread_exit();
+
   /* thread_exit() does not return, so we should never get here */
   panic("return from thread_exit in sys_exit\n");
 }

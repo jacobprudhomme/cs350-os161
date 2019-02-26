@@ -141,6 +141,9 @@ proc_destroy(struct proc *proc)
 		proc->p_cwd = NULL;
 	}
 
+#if OPT_A2
+	array_destroy(proc->p_children);
+#endif /* OPT_A2 */
 
 #ifndef UW  // in the UW version, space destruction occurs in sys_exit, not here
 	if (proc->p_addrspace) {
@@ -241,6 +244,7 @@ proc_create_runprogram(const char *name)
 	spinlock_release(&next_free_pid_lock);
 
 	proc->p_parent = NULL;
+	proc->p_children = array_create();
 
 	proc->p_exited = false;
 	proc->p_exitcode = 0;

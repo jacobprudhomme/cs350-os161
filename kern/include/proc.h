@@ -39,6 +39,9 @@
 #include <spinlock.h>
 #include <thread.h> /* required for struct threadarray */
 #include "opt-A2.h"
+#if OPT_A2
+#include <array.h>
+#endif /* OPT_A2 */
 
 struct addrspace;
 struct vnode;
@@ -54,6 +57,7 @@ struct proc {
 #if OPT_A2
   pid_t pid;
   volatile struct proc *p_parent;
+  struct array *p_children;
 
   volatile bool p_exited;
   volatile int p_exitcode;

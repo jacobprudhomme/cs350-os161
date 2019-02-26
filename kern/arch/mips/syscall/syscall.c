@@ -177,10 +177,12 @@ syscall(struct trapframe *tf)
 }
 
 void
-enter_forked_process(struct trapframe *tf) // MAYBE HERE (should sig be changed to match pseudocode?)
+enter_forked_process(void *tf, unsigned long data)
 {
 #if OPT_A2
-	struct trapframe local_tf = *tf;
+	(void)data;
+
+	struct trapframe local_tf = *(struct trapframe *)tf;
 	kfree(tf);
 
 	local_tf.tf_v0 = 0;

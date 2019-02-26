@@ -44,10 +44,14 @@ void sys__exit(int exitcode) {
   proc_remthread(curthread);
 
 #if OPT_A2
+  spinlock_acquire(&p->p_lock);
+
   p->p_exited = true;
   p->p_exitcode = exitcode;
 
-  if (!p->p_parent) {
+  if (p->p_parent) {
+    spinlock_release(&p->p_lock);
+  } else {
     proc_destroy(p);
   }
 #else

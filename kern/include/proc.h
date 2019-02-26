@@ -54,6 +54,9 @@ struct proc {
 #if OPT_A2
   pid_t pid;
   struct proc *p_parent;
+
+  bool p_exited;
+  int p_exitcode;
 #endif /* OPT_A2 */
 	struct spinlock p_lock;		/* Lock for this structure */
 	struct threadarray p_threads;	/* Threads in this process */

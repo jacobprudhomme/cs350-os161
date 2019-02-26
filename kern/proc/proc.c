@@ -241,6 +241,9 @@ proc_create_runprogram(const char *name)
 	spinlock_release(&next_free_pid_lock);
 
 	proc->p_parent = NULL;
+
+	proc->p_exited = false;
+	proc->p_exitcode = 0;
 #endif /* OPT_A2 */
 
 #ifdef UW

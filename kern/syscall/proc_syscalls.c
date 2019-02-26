@@ -122,7 +122,7 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
   child_proc->p_addrspace = child_as;
   child_proc->p_parent = curproc;
 
-  struct trapframe *tf_copy;
+  struct trapframe *tf_copy = kmalloc(sizeof(struct trapframe));
   memcpy(tf_copy, tf, sizeof(struct trapframe));
   result = thread_fork("Child Thread", child_proc, &enter_forked_process, tf_copy, 0);
   if (result) {

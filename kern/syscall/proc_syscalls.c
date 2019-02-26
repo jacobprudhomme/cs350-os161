@@ -137,6 +137,15 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   child_proc->p_addrspace = child_as;
   child_proc->p_parent = curproc;
+  spinlock_acquire(&curproc->p_lock);
+  result = array_add(curproc->p_children, child_proc);
+  spinlock_release(&curproc->p_lock);
+  if (result) {
+    as_destroy(child_as);
+    proc_destroy(child_proc);
+    DEBUG(DB_SYSCALL, "syscall: fork");
+    return result;
+  }
 
   struct trapframe *tf_copy = kmalloc(sizeof(struct trapframe));
   memcpy(tf_copy, tf, sizeof(struct trapframe));

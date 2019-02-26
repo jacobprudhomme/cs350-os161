@@ -124,7 +124,7 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   struct trapframe *tf_copy = kmalloc(sizeof(struct trapframe));
   memcpy(tf_copy, tf, sizeof(struct trapframe));
-  result = thread_fork("Child Thread", child_proc, &enter_forked_process, tf_copy, 0);
+  result = thread_fork("Child Thread", child_proc, &enter_forked_process, tf_copy, 0); // MAYBE HERE (should data be cast before passing?)
   if (result) {
     as_destroy(child_as);
     proc_destroy(child_proc);

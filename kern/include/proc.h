@@ -60,6 +60,7 @@ struct proc {
   volatile struct array *p_children;
 
   volatile bool p_exited;
+  volatile int p_exitstatus;
   volatile int p_exitcode;
 #endif /* OPT_A2 */
 	struct spinlock p_lock;		/* Lock for this structure */

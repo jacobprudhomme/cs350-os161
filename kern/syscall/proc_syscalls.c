@@ -91,7 +91,6 @@ sys_getpid(pid_t *retval)
 #endif /* OPT_A2 */
 
 /* stub handler for waitpid() system call                */
-
 int
 sys_waitpid(pid_t pid,
 	    userptr_t status,
@@ -101,6 +100,39 @@ sys_waitpid(pid_t pid,
   int exitstatus;
   int result;
 
+#if OPT_A2
+  if (options != 0) {
+    return EINVAL;
+  }
+
+  struct proc *child = NULL;
+  unsigned num_children = array_num(curproc->p_children);
+  for (unsigned i = 0; i < num_children; i++) {
+    struct proc *cur_child = (struct proc *)array_get(curproc->p_children, i);
+    if (cur_child->pid == pid) {
+      child = cur_child;
+    }
+  }
+
+  if (!child) {
+    return ECHILD;
+  }
+
+  if (!child->p_exited) {
+    return ECHILD;
+  }
+
+  exitstatus = _MKWAIT_EXIT(child->p_exitcode);
+
+  result = copyout((void *)&exitstatus, status, sizeof(int));
+  if (result) {
+    return result;
+  }
+
+  *retval = pid;
+
+  return 0;
+#else
   /* this is just a stub implementation that always reports an
      exit status of 0, regardless of the actual exit status of
      the specified process.
@@ -121,6 +153,7 @@ sys_waitpid(pid_t pid,
   }
   *retval = pid;
   return(0);
+#endif /* OPT_A2 */
 }
 
 #if OPT_A2

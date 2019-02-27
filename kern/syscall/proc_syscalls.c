@@ -58,6 +58,7 @@ void sys__exit(int exitcode) {
   if (p->p_parent) {
     spinlock_release(&p->p_lock);
   } else {
+    spinlock_release(&p->p_lock);
     proc_destroy(p);
   }
 #else

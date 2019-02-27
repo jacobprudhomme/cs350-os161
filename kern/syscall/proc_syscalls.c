@@ -47,7 +47,6 @@ void sys__exit(int exitcode) {
   spinlock_acquire(&p->p_lock);
 
   p->p_exited = true;
-  p->p_exitstatus = __WEXITED;
   p->p_exitcode = exitcode;
 
   unsigned num_children = array_num(p->p_children);

@@ -142,6 +142,10 @@ proc_destroy(struct proc *proc)
 	}
 
 #if OPT_A2
+	unsigned num_children = array_num(proc->p_children);
+	for (unsigned i = 0; i < num_children; i++) {
+		array_remove(proc->p_children, 0);
+	}
 	array_destroy(proc->p_children);
 
 	wchan_destroy(proc->p_wchan);

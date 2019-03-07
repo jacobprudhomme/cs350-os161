@@ -11,6 +11,9 @@
 #include <copyinout.h>
 #include <mips/trapframe.h>
 #include "opt-A2.h"
+#if OPT_A2
+#include <wchan.h>
+#endif /* OPT_A2 */
 
 /* this implementation of sys__exit does not do anything with the exit code */
 /* this needs to be fixed to get exit() and waitpid() working properly */
@@ -56,6 +59,8 @@ void sys__exit(int exitcode) {
     child->p_parent = NULL;
     spinlock_release(&child->p_lock);
   }
+
+  wchan_wakeone(p->p_wchan);
 
   if (!p->p_parent) {
     proc_destroy(p);
@@ -117,9 +122,14 @@ sys_waitpid(pid_t pid,
     return ECHILD;
   }
 
-  if (!child->p_exited) {
-    return ECHILD;
+  spinlock_acquire(&child->p_lock);
+  while (!child->p_exited) {
+    wchan_lock(child->p_wchan);
+    spinlock_release(&child->p_lock);
+    wchan_sleep(child->p_wchan);
+    spinlock_acquire(&child->p_lock);
   }
+  spinlock_release(&child->p_lock);
 
   exitstatus = _MKWAIT_EXIT(child->p_exitcode);
 

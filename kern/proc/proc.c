@@ -143,6 +143,8 @@ proc_destroy(struct proc *proc)
 
 #if OPT_A2
 	array_destroy(proc->p_children);
+
+	wchan_destroy(proc->p_wchan);
 #endif /* OPT_A2 */
 
 #ifndef UW  // in the UW version, space destruction occurs in sys_exit, not here
@@ -248,6 +250,8 @@ proc_create_runprogram(const char *name)
 
 	proc->p_exited = false;
 	proc->p_exitcode = 0;
+
+	proc->p_wchan = wchan_create("Process Waitchannel");
 #endif /* OPT_A2 */
 
 #ifdef UW

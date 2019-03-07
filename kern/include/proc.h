@@ -41,6 +41,7 @@
 #include "opt-A2.h"
 #if OPT_A2
 #include <array.h>
+#include <wchan.h>
 #endif /* OPT_A2 */
 
 struct addrspace;
@@ -61,6 +62,8 @@ struct proc {
 
   volatile bool p_exited;
   volatile int p_exitcode;
+
+  struct wchan *p_wchan;
 #endif /* OPT_A2 */
 	struct spinlock p_lock;		/* Lock for this structure */
 	struct threadarray p_threads;	/* Threads in this process */

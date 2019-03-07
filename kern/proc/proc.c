@@ -144,7 +144,14 @@ proc_destroy(struct proc *proc)
 #if OPT_A2
 	unsigned num_children = array_num(proc->p_children);
 	for (unsigned i = 0; i < num_children; i++) {
+		struct proc *child = (struct proc *)array_get(proc->p_children, 0);
 		array_remove(proc->p_children, 0);
+		spinlock_acquire(&child->p_lock);
+		bool exited = child->p_exited;
+		spinlock_release(&child->p_lock);
+		if (exited) {
+			proc_destroy(child);
+		}
 	}
 	array_destroy(proc->p_children);
 

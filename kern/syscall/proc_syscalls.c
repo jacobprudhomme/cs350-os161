@@ -110,11 +110,13 @@ sys_waitpid(pid_t pid,
   }
 
   struct proc *child = NULL;
+  unsigned child_index;
   unsigned num_children = array_num(curproc->p_children);
   for (unsigned i = 0; i < num_children; i++) {
     struct proc *cur_child = (struct proc *)array_get(curproc->p_children, i);
     if (cur_child->pid == pid) {
       child = cur_child;
+      child_index = i;
     }
   }
 
@@ -131,7 +133,11 @@ sys_waitpid(pid_t pid,
   }
   spinlock_release(&child->p_lock);
 
+  array_remove(curproc->p_children, child_index);
+
   exitstatus = _MKWAIT_EXIT(child->p_exitcode);
+
+  proc_destroy(child);
 
   result = copyout((void *)&exitstatus, status, sizeof(int));
   if (result) {

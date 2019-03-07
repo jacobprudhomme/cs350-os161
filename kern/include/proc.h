@@ -57,7 +57,7 @@ struct proc {
 #if OPT_A2
   pid_t pid;
   volatile struct proc *p_parent;
-  volatile struct array *p_children;
+  struct array *p_children;
 
   volatile bool p_exited;
   volatile int p_exitcode;

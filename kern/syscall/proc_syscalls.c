@@ -161,7 +161,6 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   struct proc *child_proc = proc_create_runprogram("Child Process");
   if (child_proc == NULL) {
-    DEBUG(DB_SYSCALL, "syscall: fork");
     return ENOMEM;
   }
 
@@ -170,7 +169,6 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
   result = as_copy(parent_as, &child_as);
   if (result) {
     proc_destroy(child_proc);
-    DEBUG(DB_SYSCALL, "syscall: fork");
     return result;
   }
 
@@ -182,7 +180,6 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
   if (result) {
     as_destroy(child_as);
     proc_destroy(child_proc);
-    DEBUG(DB_SYSCALL, "syscall: fork");
     return result;
   }
 
@@ -192,7 +189,6 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
   if (result) {
     as_destroy(child_as);
     proc_destroy(child_proc);
-    DEBUG(DB_SYSCALL, "syscall: fork");
     return result;
   }
 

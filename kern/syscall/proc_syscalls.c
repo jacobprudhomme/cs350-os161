@@ -45,20 +45,19 @@ void sys__exit(int exitcode) {
 
 #if OPT_A2
   spinlock_acquire(&p->p_lock);
-
   p->p_exited = true;
   p->p_exitcode = exitcode;
+  spinlock_release(&p->p_lock);
 
   unsigned num_children = array_num(p->p_children);
   for (unsigned i = 0; i < num_children; i++) {
     struct proc *child = (struct proc *)array_get(p->p_children, i);
+    spinlock_acquire(&child->p_lock);
     child->p_parent = NULL;
+    spinlock_release(&child->p_lock);
   }
 
-  if (p->p_parent) {
-    spinlock_release(&p->p_lock);
-  } else {
-    spinlock_release(&p->p_lock);
+  if (!p->p_parent) {
     proc_destroy(p);
   }
 #else

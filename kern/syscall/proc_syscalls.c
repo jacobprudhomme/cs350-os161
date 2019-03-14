@@ -52,15 +52,21 @@ void sys__exit(int exitcode) {
   p->p_exitcode = exitcode;
   spinlock_release(&p->p_lock);
 
+  spinlock_acquire(&p->p_lock);
   unsigned num_children = array_num(p->p_children);
+  spinlock_release(&p->p_lock);
   for (unsigned i = 0; i < num_children; i++) {
+    spinlock_acquire(&p->p_lock);
     struct proc *child = (struct proc *)array_get(p->p_children, i);
+    spinlock_release(&p->p_lock);
     spinlock_acquire(&child->p_lock);
     child->p_parent = NULL;
     spinlock_release(&child->p_lock);
   }
 
+  spinlock_acquire(&p->p_lock);
   wchan_wakeone(p->p_wchan);
+  spinlock_release(&p->p_lock);
 
   if (!p->p_parent) {
     proc_destroy(p);
@@ -111,9 +117,13 @@ sys_waitpid(pid_t pid,
 
   struct proc *child = NULL;
   unsigned child_index;
+  spinlock_acquire(&curproc->p_lock);
   unsigned num_children = array_num(curproc->p_children);
+  spinlock_release(&curproc->p_lock);
   for (unsigned i = 0; i < num_children; i++) {
+    spinlock_acquire(&curproc->p_lock);
     struct proc *cur_child = (struct proc *)array_get(curproc->p_children, i);
+    spinlock_release(&curproc->p_lock);
     if (cur_child->pid == pid) {
       child = cur_child;
       child_index = i;
@@ -133,7 +143,9 @@ sys_waitpid(pid_t pid,
   }
   spinlock_release(&child->p_lock);
 
+  spinlock_acquire(&curproc->p_lock);
   array_remove(curproc->p_children, child_index);
+  spinlock_release(&curproc->p_lock);
 
   exitstatus = _MKWAIT_EXIT(child->p_exitcode);
 
@@ -190,7 +202,9 @@ int sys_fork(struct trapframe *tf, pid_t *retval) {
 
   child_proc->p_addrspace = child_as;
   child_proc->p_parent = curproc;
+  spinlock_acquire(&curproc->p_lock);
   result = array_add(curproc->p_children, child_proc, NULL);
+  spinlock_release(&curproc->p_lock);
   if (result) {
     as_destroy(child_as);
     proc_destroy(child_proc);

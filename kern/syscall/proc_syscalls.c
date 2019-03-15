@@ -12,6 +12,8 @@
 #include <mips/trapframe.h>
 #include "opt-A2.h"
 #if OPT_A2
+#include <kern/fcntl.h>
+#include <vfs.h>
 #include <wchan.h>
 #endif /* OPT_A2 */
 

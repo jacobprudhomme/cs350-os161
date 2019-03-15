@@ -175,10 +175,18 @@ sys_waitpid(pid_t pid,
 int sys_execv(userptr_t progname) {
   int result = 0;
 
+  char *kprogname;
   struct vnode *v;
 
-  result = vfs_open((char *)progname, O_RDONLY, 0, &v);
+  size_t progname_len = strlen((char *)progname) + 1;
+  result = copyinstr(progname, kprogname, progname_len, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
   if (result) {
+    return result;
+  }
+
+  result = vfs_open(kprogname, O_RDONLY, 0, &v);
+  if (result) {
+    kfree(kprogname);
     return result;
   }
 }

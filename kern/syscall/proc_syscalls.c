@@ -178,7 +178,7 @@ int sys_execv(userptr_t progname) {
   char *kprogname;
   struct addrspace *as;
   struct vnode *v;
-  vaddr_t entrypoint;
+  vaddr_t entrypoint, stackptr;
 
   size_t progname_len = strlen((char *)progname) + 1;
   result = copyinstr(progname, kprogname, progname_len, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
@@ -210,6 +210,12 @@ int sys_execv(userptr_t progname) {
     return result;
   }
   vfs_close(v);
+
+  result = as_define_stack(as, &stackptr);
+  if (result) {
+    kfree(kprogname);
+    return result;
+  }
 }
 
 int sys_fork(struct trapframe *tf, pid_t *retval) {

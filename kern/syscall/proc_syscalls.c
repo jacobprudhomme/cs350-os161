@@ -216,6 +216,11 @@ int sys_execv(userptr_t progname) {
     kfree(kprogname);
     return result;
   }
+
+  enter_new_process(0, NULL, stackptr, entrypoint);
+
+  panic("enter_new_process returned\n");
+  return EINVAL;
 }
 
 int sys_fork(struct trapframe *tf, pid_t *retval) {

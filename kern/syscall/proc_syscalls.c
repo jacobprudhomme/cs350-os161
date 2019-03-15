@@ -199,8 +199,9 @@ int sys_execv(userptr_t progname) {
     return ENOMEM;
   }
 
-  curproc_setas(as);
+  struct addrspace *old_as = curproc_setas(as);
   as_activate();
+  as_destroy(old_as);
 
   result = load_elf(v, &entrypoint);
   if (result) {

@@ -176,6 +176,7 @@ int sys_execv(userptr_t progname) {
   int result = 0;
 
   char *kprogname;
+  struct addrspace *as;
   struct vnode *v;
 
   size_t progname_len = strlen((char *)progname) + 1;
@@ -189,6 +190,16 @@ int sys_execv(userptr_t progname) {
     kfree(kprogname);
     return result;
   }
+
+  as = as_create();
+  if (as == NULL) {
+    vfs_close(v);
+    kfree(kprogname);
+    return ENOMEM;
+  }
+
+  curproc_setas(as);
+  as_activate();
 }
 
 int sys_fork(struct trapframe *tf, pid_t *retval) {

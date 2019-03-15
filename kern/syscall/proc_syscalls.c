@@ -172,7 +172,16 @@ sys_waitpid(pid_t pid,
 }
 
 #if OPT_A2
-int sys_execv(userptr_t progname) {}
+int sys_execv(userptr_t progname) {
+  int result = 0;
+
+  struct vnode *v;
+
+  result = vfs_open((char *)progname, O_RDONLY, 0, &v);
+  if (result) {
+    return result;
+  }
+}
 
 int sys_fork(struct trapframe *tf, pid_t *retval) {
   int result = 0;

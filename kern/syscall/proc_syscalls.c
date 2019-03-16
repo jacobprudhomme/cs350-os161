@@ -206,12 +206,11 @@ int sys_execv(userptr_t progname) {
   as_destroy(old_as);
 
   result = load_elf(v, &entrypoint);
+  vfs_close(v);
   if (result) {
-    vfs_close(v);
     kfree(kprogname);
     return result;
   }
-  vfs_close(v);
 
   result = as_define_stack(as, &stackptr);
   if (result) {

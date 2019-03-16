@@ -178,7 +178,7 @@ int sys_execv(userptr_t progname) {
   int result = 0;
 
   char *kprogname;
-  struct addrspace *as;
+  struct addrspace *as, *old_as;
   struct vnode *v;
   vaddr_t entrypoint, stackptr;
 
@@ -200,7 +200,8 @@ int sys_execv(userptr_t progname) {
     return ENOMEM;
   }
 
-  struct addrspace *old_as = curproc_setas(as);
+  as_deactivate();
+  old_as = curproc_setas(as);
   as_activate();
   as_destroy(old_as);
 

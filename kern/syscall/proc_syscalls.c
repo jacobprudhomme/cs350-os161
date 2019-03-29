@@ -185,7 +185,7 @@ int sys_execv(userptr_t progname, userptr_t args) {
 
   size_t progname_len = strlen((char *)progname) + 1;
   kprogname = kmalloc(progname_len * sizeof(char));
-  result = copyinstr(progname, kprogname, progname_len, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
+  result = copyinstr(progname, kprogname, progname_len, NULL);
   if (result) {
     return result;
   }
@@ -200,7 +200,7 @@ int sys_execv(userptr_t progname, userptr_t args) {
     char *arg = ((char **)args)[i];
     size_t arg_len = strlen(arg) + 1;
     char *karg = kmalloc(arg_len * sizeof(char));
-    result = copyinstr(arg, karg, arg_len, NULL); /* MAYBE HERE (cast arg to const_userptr_t?) */
+    result = copyinstr((userptr_t)arg, karg, arg_len, NULL);
     if (result) {
       for (unsigned j = array_num(kargs) - 1; j >= 0; j--) {
         kfree((char *)array_get(kargs, j)); /* MAYBE HERE (do i need to cast array_get() first?) */

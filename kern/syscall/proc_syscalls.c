@@ -12,6 +12,7 @@
 #include <mips/trapframe.h>
 #include "opt-A2.h"
 #if OPT_A2
+#include <array.h>
 #include <kern/fcntl.h>
 #include <vfs.h>
 #include <wchan.h>
@@ -188,6 +189,8 @@ int sys_execv(userptr_t progname, userptr_t args) {
   if (result) {
     return result;
   }
+
+  struct array *kargs = array_create();
 
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
   if (result) {

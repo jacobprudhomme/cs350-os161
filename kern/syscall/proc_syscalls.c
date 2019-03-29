@@ -182,7 +182,8 @@ int sys_execv(userptr_t progname) {
   struct vnode *v;
   vaddr_t entrypoint, stackptr;
 
-  result = copyinstr(progname, kprogname, strlen((char *)progname) + 1, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
+  size_t progname_len = strlen((char *)progname) + 1;
+  result = copyinstr(progname, kprogname, progname_len, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
   if (result) {
     return result;
   }

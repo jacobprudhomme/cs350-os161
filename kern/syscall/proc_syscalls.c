@@ -195,6 +195,26 @@ int sys_execv(userptr_t progname, userptr_t args) {
     num_args++;
   }
 
+  struct array *kargs = array_create();
+  for (unsigned i = 0; i < num_args; i++) {
+    char *arg = ((char **)args)[i];
+    size_t arg_len = strlen(arg) + 1;
+    char *karg = kmalloc(arg_len * sizeof(char));
+    result = copyinstr(arg, karg, arg_len, NULL); /* MAYBE HERE (cast arg to const_userptr_t?) */
+    if (result) {
+      for (unsigned j = array_num(kargs) - 1; j >= 0; j--) {
+        kfree((char *)array_get(kargs, j)); /* MAYBE HERE (do i need to cast array_get() first?) */
+        array_remove(kargs, j);
+      }
+      array_destroy(kargs);
+      kfree(kprogname);
+      return result;
+    }
+
+    array_add(kargs, (void *)karg, NULL); /* MAYBE HERE (should it be (void *)&karg?) */
+  }
+  array_add(kargs, NULL, NULL);
+
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
   if (result) {
     kfree(kprogname);

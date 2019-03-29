@@ -190,8 +190,7 @@ int sys_execv(userptr_t progname, userptr_t args) {
     return result;
   }
 
-  struct array *kargs = array_create();
-  int num_args = 0;
+  unsigned num_args = 0;
   while (((char **)args)[num_args] != NULL) {
     num_args++;
   }

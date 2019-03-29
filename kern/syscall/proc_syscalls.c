@@ -191,6 +191,10 @@ int sys_execv(userptr_t progname, userptr_t args) {
   }
 
   struct array *kargs = array_create();
+  int num_args = 0;
+  while (((char **)args)[num_args] != NULL) {
+    num_args++;
+  }
 
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
   if (result) {

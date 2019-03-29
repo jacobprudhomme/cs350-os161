@@ -183,6 +183,7 @@ int sys_execv(userptr_t progname) {
   vaddr_t entrypoint, stackptr;
 
   size_t progname_len = strlen((char *)progname) + 1;
+  kprogname = kmalloc(progname_len * sizeof(char));
   result = copyinstr(progname, kprogname, progname_len, NULL); /* MAYBE HERE (cast progname to const_userptr_t?) */
   if (result) {
     return result;

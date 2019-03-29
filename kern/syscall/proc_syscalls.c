@@ -174,7 +174,7 @@ sys_waitpid(pid_t pid,
 }
 
 #if OPT_A2
-int sys_execv(userptr_t progname) {
+int sys_execv(userptr_t progname, userptr_t args) {
   int result = 0;
 
   char *kprogname;

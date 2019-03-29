@@ -217,6 +217,11 @@ int sys_execv(userptr_t progname, userptr_t args) {
 
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
   if (result) {
+    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
+      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, i);
+    }
+    array_destroy(kargs);
     kfree(kprogname);
     return result;
   }
@@ -224,6 +229,11 @@ int sys_execv(userptr_t progname, userptr_t args) {
   as = as_create();
   if (as == NULL) {
     vfs_close(v);
+    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
+      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, i);
+    }
+    array_destroy(kargs);
     kfree(kprogname);
     return ENOMEM;
   }
@@ -236,12 +246,22 @@ int sys_execv(userptr_t progname, userptr_t args) {
   result = load_elf(v, &entrypoint);
   vfs_close(v);
   if (result) {
+    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
+      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, i);
+    }
+    array_destroy(kargs);
     kfree(kprogname);
     return result;
   }
 
   result = as_define_stack(as, &stackptr);
   if (result) {
+    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
+      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, i);
+    }
+    array_destroy(kargs);
     kfree(kprogname);
     return result;
   }

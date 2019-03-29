@@ -202,9 +202,10 @@ int sys_execv(userptr_t progname, userptr_t args) {
     char *karg = kmalloc(arg_len * sizeof(char));
     result = copyinstr((userptr_t)arg, karg, arg_len, NULL);
     if (result) {
-      for (unsigned j = array_num(kargs) - 1; j >= 0; j--) {
-        kfree((char *)array_get(kargs, j)); /* MAYBE HERE (do i need to cast array_get() first?) */
-        array_remove(kargs, j);
+      unsigned kargs_len = array_num(kargs);
+      for (unsigned j = 0; j < kargs_len; j++) {
+        kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */
+        array_remove(kargs, 0);
       }
       array_destroy(kargs);
       kfree(kprogname);
@@ -218,10 +219,11 @@ int sys_execv(userptr_t progname, userptr_t args) {
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
   kfree(kprogname);
   if (result) {
-    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
-      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
-      array_remove(kargs, i);
+    for (unsigned i = 0; i < num_args; i++) {
+      kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, 0);
     }
+    array_remove(kargs, 0);
     array_destroy(kargs);
     return result;
   }
@@ -229,10 +231,11 @@ int sys_execv(userptr_t progname, userptr_t args) {
   as = as_create();
   if (as == NULL) {
     vfs_close(v);
-    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
-      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
-      array_remove(kargs, i);
+    for (unsigned i = 0; i < num_args; i++) {
+      kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, 0);
     }
+    array_remove(kargs, 0);
     array_destroy(kargs);
     return ENOMEM;
   }
@@ -245,20 +248,22 @@ int sys_execv(userptr_t progname, userptr_t args) {
   result = load_elf(v, &entrypoint);
   vfs_close(v);
   if (result) {
-    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
-      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
-      array_remove(kargs, i);
+    for (unsigned i = 0; i < num_args; i++) {
+      kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, 0);
     }
+    array_remove(kargs, 0);
     array_destroy(kargs);
     return result;
   }
 
   result = as_define_stack(as, &stackptr);
   if (result) {
-    for (unsigned i = array_num(kargs) - 1; i >= 0; i--) {
-      kfree((char *)array_get(kargs, i)); /* MAYBE HERE (do i need to cast array_get() first?) */
-      array_remove(kargs, i);
+    for (unsigned i = 0; i < num_args; i++) {
+      kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */
+      array_remove(kargs, 0);
     }
+    array_remove(kargs, 0);
     array_destroy(kargs);
     return result;
   }

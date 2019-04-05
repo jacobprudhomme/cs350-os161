@@ -257,7 +257,7 @@ int sys_execv(userptr_t progname, userptr_t args) {
     return result;
   }
 
-  result = as_define_stack(as, &stackptr);
+  result = as_define_stack(as, &stackptr, num_args, kargs);
   if (result) {
     for (unsigned i = 0; i < num_args; i++) {
       kfree((char *)array_get(kargs, 0)); /* MAYBE HERE (do i need to cast array_get() first?) */

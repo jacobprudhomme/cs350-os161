@@ -37,6 +37,7 @@
 #include <mips/tlb.h>
 #include <addrspace.h>
 #include <vm.h>
+#include "opt-A2.h"
 
 /*
  * Dumb MIPS-only "VM system" that is intended to only be just barely
@@ -347,8 +348,11 @@ as_define_stack(struct addrspace *as, vaddr_t *stackptr)
 {
 	KASSERT(as->as_stackpbase != 0);
 
+#if OPT_A2
+#else
 	*stackptr = USERSTACK;
 	return 0;
+#endif
 }
 
 int

@@ -268,7 +268,7 @@ int sys_execv(userptr_t progname, userptr_t args) {
     return result;
   }
 
-  enter_new_process(0, NULL, stackptr, entrypoint);
+  enter_new_process(0, NULL, stackptr, entrypoint); /* HERE (need to pass num_args and pointer to argv) */
 
   panic("enter_new_process returned\n");
   return EINVAL;

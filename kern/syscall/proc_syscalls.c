@@ -190,15 +190,14 @@ int sys_execv(userptr_t progname) {
   }
 
   result = vfs_open(kprogname, O_RDONLY, 0, &v);
+  kfree(kprogname);
   if (result) {
-    kfree(kprogname);
     return result;
   }
 
   as = as_create();
   if (as == NULL) {
     vfs_close(v);
-    kfree(kprogname);
     return ENOMEM;
   }
 
@@ -210,13 +209,11 @@ int sys_execv(userptr_t progname) {
   result = load_elf(v, &entrypoint);
   vfs_close(v);
   if (result) {
-    kfree(kprogname);
     return result;
   }
 
   result = as_define_stack(as, &stackptr);
   if (result) {
-    kfree(kprogname);
     return result;
   }
 

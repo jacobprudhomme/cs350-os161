@@ -39,6 +39,7 @@
 #include <vm.h>
 #include <mainbus.h>
 #include <syscall.h>
+#include "opt-A3.h"
 
 
 /* in exception.S */
@@ -114,7 +115,40 @@ kill_curthread(vaddr_t epc, unsigned code, vaddr_t vaddr)
 
 	kprintf("Fatal user mode trap %u sig %d (%s, epc 0x%x, vaddr 0x%x)\n",
 		code, sig, trapcodenames[code], epc, vaddr);
+#if OPT_A3
+	struct addrspace *as;
+	struct proc *p = curproc;
+
+	KASSERT(p->p_addrspace != NULL);
+	as_deactivate();
+	as = curproc_setas(NULL);
+	as_destroy(as);
+
+  proc_remthread(curthread);
+
+  spinlock_acquire(&p->p_lock);
+  p->p_exited = true;
+  p->p_exitstatus = _MKWAIT_SIG(code);
+  spinlock_release(&p->p_lock);
+
+  unsigned num_children = array_num(p->p_children);
+  for (unsigned i = 0; i < num_children; i++) {
+    struct proc *child = (struct proc *)array_get(p->p_children, i);
+    spinlock_acquire(&child->p_lock);
+    child->p_parent = NULL;
+    spinlock_release(&child->p_lock);
+  }
+
+  wchan_wakeone(p->p_wchan);
+
+  if (!p->p_parent) {
+    proc_destroy(p);
+  }
+
+  thread_exit();
+#else
 	panic("I don't know how to handle this\n");
+#endif
 }
 
 /*

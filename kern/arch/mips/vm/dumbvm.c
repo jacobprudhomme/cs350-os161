@@ -202,6 +202,9 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	}
 
 #if OPT_A3
+	ehi = faultaddress;
+	elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+
 	int existing_tlb_entry = tlb_probe(ehi, 0);
 	if (existing_tlb_entry >= 0) {
 		tlb_write(ehi, elo, existing_tlb_entry);

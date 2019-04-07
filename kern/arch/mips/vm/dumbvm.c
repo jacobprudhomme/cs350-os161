@@ -362,6 +362,7 @@ as_complete_load(struct addrspace *as)
 {
 #if OPT_A3
 	as->as_load_complete = true;
+	as_activate();
 #else
 	(void)as;
 #endif

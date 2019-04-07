@@ -360,7 +360,11 @@ as_prepare_load(struct addrspace *as)
 int
 as_complete_load(struct addrspace *as)
 {
+#if OPT_A3
+	as->as_load_complete = true;
+#else
 	(void)as;
+#endif
 	return 0;
 }
 

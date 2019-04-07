@@ -194,12 +194,11 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 			continue;
 		}
 		ehi = faultaddress;
-#if OPT_A3
-		elo = faultaddress >= vbase1 && faultaddress < vtop1
-				? paddr | ~TLBLO_DIRTY | TLBLO_VALID
-				: paddr | TLBLO_DIRTY | TLBLO_VALID;
-#else
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+#if OPT_A3
+		if (faultaddress >= vbase1 && faultaddress < vtop1) {
+			elo &= ~TLBLO_DIRTY;
+		}
 #endif
 		DEBUG(DB_VM, "dumbvm: 0x%x -> 0x%x\n", faultaddress, paddr);
 		tlb_write(ehi, elo, i);
@@ -209,9 +208,10 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 
 #if OPT_A3
 	ehi = faultaddress;
-	elo = faultaddress >= vbase1 && faultaddress < vtop1
-			? paddr | ~TLBLO_DIRTY | TLBLO_VALID
-			: paddr | TLBLO_DIRTY | TLBLO_VALID;
+	elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
+	if (faultaddress >= vbase1 && faultaddress < vtop1) {
+		elo &= ~TLBLO_DIRTY;
+	}
 	tlb_random(ehi, elo);
 
 	splx(spl);

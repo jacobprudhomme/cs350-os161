@@ -196,7 +196,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		ehi = faultaddress;
 		elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 #if OPT_A3
-		if (faultaddress >= vbase1 && faultaddress < vtop1) {
+		if (faultaddress >= vbase1 && faultaddress < vtop1 && as->as_load_complete) {
 			elo &= ~TLBLO_DIRTY;
 		}
 #endif
@@ -209,7 +209,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 #if OPT_A3
 	ehi = faultaddress;
 	elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
-	if (faultaddress >= vbase1 && faultaddress < vtop1) {
+	if (faultaddress >= vbase1 && faultaddress < vtop1 && as->as_load_complete) {
 		elo &= ~TLBLO_DIRTY;
 	}
 	tlb_random(ehi, elo);

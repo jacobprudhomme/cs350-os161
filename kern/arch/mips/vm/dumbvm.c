@@ -206,7 +206,7 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 	elo = paddr | TLBLO_DIRTY | TLBLO_VALID;
 
 	int existing_tlb_entry = tlb_probe(ehi, 0);
-	if (existing_tlb_entry >= 0) {
+	if (existing_tlb_entry >= 0) { /* MAYBE HERE (is it necessary to check for existing TLB entry?) */
 		tlb_write(ehi, elo, existing_tlb_entry);
 	} else {
 		tlb_random(ehi, elo);

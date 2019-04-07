@@ -239,6 +239,10 @@ as_create(void)
 	as->as_npages2 = 0;
 	as->as_stackpbase = 0;
 
+#if OPT_A3
+	as->as_load_complete = false;
+#endif
+
 	return as;
 }
 

@@ -200,6 +200,13 @@ vm_fault(int faulttype, vaddr_t faultaddress)
 		return 0;
 	}
 
+	int existing_tlb_entry = tlb_probe(ehi, 0);
+	if (existing_tlb_entry >= 0) {
+		tlb_write(ehi, elo, existing_tlb_entry);
+	} else {
+		tlb_random(ehi, elo);
+	}
+
 	kprintf("dumbvm: Ran out of TLB entries - cannot handle page fault\n");
 	splx(spl);
 	return EFAULT;

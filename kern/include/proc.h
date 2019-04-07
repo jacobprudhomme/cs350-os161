@@ -61,7 +61,7 @@ struct proc {
   struct array *p_children;
 
   volatile bool p_exited;
-  volatile int p_exitcode;
+  volatile int p_exitstatus;
 
   struct wchan *p_wchan;
 #endif /* OPT_A2 */

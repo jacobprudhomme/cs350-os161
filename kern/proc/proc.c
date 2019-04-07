@@ -260,7 +260,7 @@ proc_create_runprogram(const char *name)
 	proc->p_children = array_create();
 
 	proc->p_exited = false;
-	proc->p_exitcode = 0;
+	proc->p_exitstatus = 0;
 
 	proc->p_wchan = wchan_create("Process Waitchannel");
 #endif /* OPT_A2 */

@@ -51,7 +51,7 @@ void sys__exit(int exitcode) {
 #if OPT_A2
   spinlock_acquire(&p->p_lock);
   p->p_exited = true;
-  p->p_exitcode = exitcode;
+  p->p_exitstatus = _MKWAIT_EXIT(exitcode);
   spinlock_release(&p->p_lock);
 
   unsigned num_children = array_num(p->p_children);
@@ -137,7 +137,7 @@ sys_waitpid(pid_t pid,
 
   array_remove(curproc->p_children, child_index);
 
-  exitstatus = _MKWAIT_EXIT(child->p_exitcode);
+  exitstatus = (child->p_exitstatus);
 
   proc_destroy(child);
 

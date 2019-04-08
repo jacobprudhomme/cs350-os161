@@ -72,7 +72,7 @@ vm_bootstrap(void)
 	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
 
 	spinlock_acquire(&coremap_lock);
-	coremap = (int *)PADDR_TO_KVADDR(lo);
+	coremap = (int *)PADDR_TO_KVADDR(lo); /* MAYBE HERE (should i be writing directly to the physical address?) */
 	for (unsigned i = 0; i < npages; i++) {
 		coremap[i] = 0;
 	}
@@ -336,6 +336,7 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+	/* MAYBE HERE (should i use as_vbase... instead?) */
 	kfree(PADDR_TO_KVADDR(as->as_pbase1));
 	kfree(PADDR_TO_KVADDR(as->as_pbase2));
 	kfree(PADDR_TO_KVADDR(as->as_stackpbase));

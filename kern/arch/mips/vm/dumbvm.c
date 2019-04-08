@@ -159,7 +159,13 @@ free_kpages(vaddr_t addr)
 {
 #if OPT_A3
 	unsigned start_page = (addr - PADDR_TO_KVADDR(ram_start)) / PAGE_SIZE;
+	unsigned npages = 1;
 
+	spinlock_acquire(&coremap_lock);
+	while (coremap[start_page + 1] == coremap[start_page] + 1) {
+		npages++;
+	}
+	spinlock_release(&coremap_lock);
 #else
 	(void)addr;
 #endif

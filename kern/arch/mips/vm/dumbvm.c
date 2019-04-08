@@ -157,9 +157,12 @@ alloc_kpages(int npages)
 void
 free_kpages(vaddr_t addr)
 {
-	/* nothing - leak the memory. */
+#if OPT_A3
+	unsigned start_page = (addr - PADDR_TO_KVADDR(ram_start)) / PAGE_SIZE;
 
+#else
 	(void)addr;
+#endif
 }
 
 void

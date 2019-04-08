@@ -64,6 +64,8 @@ ram_bootstrap(void)
 		coremap[i] = 0;
 	}
 	spinlock_release(&coremap_lock);
+
+	firstpaddr = coremap + npages - MIPS_KSEG0;
 #else
 	size_t ramsize;
 

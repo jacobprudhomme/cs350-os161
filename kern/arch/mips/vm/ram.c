@@ -52,7 +52,7 @@ void
 ram_bootstrap(void)
 {
 #if OPT_A3
-	ram_getsize(firstpaddr, lastpaddr);
+	ram_getsize(&firstpaddr, &lastpaddr);
 #else
 	size_t ramsize;
 

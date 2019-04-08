@@ -336,6 +336,10 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+	kfree(PADDR_TO_KVADDR(as->as_pbase1));
+	kfree(PADDR_TO_KVADDR(as->as_pbase2));
+	kfree(PADDR_TO_KVADDR(as->as_stackpbase));
+
 	kfree(as);
 }
 

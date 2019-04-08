@@ -111,7 +111,7 @@ getppages(unsigned long npages)
 				sum += coremap[i + j];
 			}
 			if (sum == 0) {
-				addr = (vaddr_t)&coremap[i] - MIPS_KSEG0;
+				addr = ram_start + (i * PAGE_SIZE);
 				break;
 			} else {
 				i += npages;

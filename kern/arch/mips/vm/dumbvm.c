@@ -106,6 +106,11 @@ getppages(unsigned long npages)
 				i++;
 			}
 
+			if (ram_start + ((i + npages) * PAGE_SIZE) > ram_end) {
+				addr = 0;
+				break;
+			}
+
 			int sum = 0;
 			for (unsigned j = 0; j < npages; j++) {
 				sum += coremap[i + j];

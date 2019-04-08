@@ -31,21 +31,12 @@
 #include <lib.h>
 #include <vm.h>
 #include <mainbus.h>
-#include "opt-A3.h"
-#if OPT_A3
-#include <spinlock.h>
-#endif
 
 
 vaddr_t firstfree;   /* first free virtual address; set by start.S */
 
 static paddr_t firstpaddr;  /* address of first free physical page */
 static paddr_t lastpaddr;   /* one past end of last free physical page */
-
-#if OPT_A3
-static int *coremap;
-static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
-#endif
 
 /*
  * Called very early in system boot to figure out how much physical
@@ -54,20 +45,6 @@ static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
 void
 ram_bootstrap(void)
 {
-#if OPT_A3
-	ram_getsize(&firstpaddr, &lastpaddr);
-	size_t ramsize = lastpaddr - firstpaddr;
-	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
-
-	spinlock_acquire(&coremap_lock);
-	coremap = (int *)PADDR_TO_KVADDR(firstpaddr);
-	for (unsigned i = 0; i < npages; i++) {
-		coremap[i] = 0;
-	}
-	spinlock_release(&coremap_lock);
-
-	firstpaddr = (vaddr_t)coremap + npages - MIPS_KSEG0;
-#else
 	size_t ramsize;
 
 	/* Get size of RAM. */
@@ -94,7 +71,6 @@ ram_bootstrap(void)
 
 	kprintf("%uk physical memory available\n",
 		(lastpaddr-firstpaddr)/1024);
-#endif
 }
 
 /*

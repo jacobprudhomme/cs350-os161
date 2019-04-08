@@ -52,10 +52,30 @@
  */
 static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 
+#if OPT_A3
+static int *coremap;
+static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
+#endif
+
 void
 vm_bootstrap(void)
 {
-	/* Do nothing. */
+#if OPT_A3
+	paddr_t lo, hi;
+
+	ram_getsize(&lo, &hi);
+	size_t ramsize = hi - lo;
+	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
+
+	spinlock_acquire(&coremap_lock);
+	coremap = (int *)PADDR_TO_KVADDR(lo);
+	for (unsigned i = 0; i < npages; i++) {
+		coremap[i] = 0;
+	}
+	spinlock_release(&coremap_lock);
+
+	lo = (vaddr_t)coremap + npages - MIPS_KSEG0;
+#endif
 }
 
 static

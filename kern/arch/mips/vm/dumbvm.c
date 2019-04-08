@@ -55,6 +55,8 @@ static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 #if OPT_A3
 static int *coremap;
 static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
+static paddr_t ram_start;
+static paddr_t ram_end;
 
 static bool vm_initialized = false;
 #endif
@@ -80,6 +82,9 @@ vm_bootstrap(void)
 			? (npages * sizeof(int)) / PAGE_SIZE
 			: ((npages * sizeof(int)) / PAGE_SIZE) + 1;
 	lo = (vaddr_t)coremap + (npages_coremap * PAGE_SIZE) - MIPS_KSEG0;
+
+	ram_start = lo;
+	ram_end = hi;
 
 	vm_initialized = true;
 #endif

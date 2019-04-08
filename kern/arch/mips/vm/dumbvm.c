@@ -93,6 +93,13 @@ getppages(unsigned long npages)
 
 #if OPT_A3
 	if (vm_initialized) {
+		unsigned i = 0;
+
+		spinlock_acquire(&coremap_lock);
+		while (coremap[i] > 0) {
+			i++;
+		}
+		spinlock_release(&coremap_lock);
 	} else {
 		spinlock_acquire(&stealmem_lock);
 		addr = ram_stealmem(npages);

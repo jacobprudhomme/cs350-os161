@@ -31,12 +31,18 @@
 #include <lib.h>
 #include <vm.h>
 #include <mainbus.h>
+#include "opt-A3.h"
 
 
 vaddr_t firstfree;   /* first free virtual address; set by start.S */
 
 static paddr_t firstpaddr;  /* address of first free physical page */
 static paddr_t lastpaddr;   /* one past end of last free physical page */
+
+#if OPT_A3
+static int *coremap;
+static struct spinlock coremap_lock;
+#endif
 
 /*
  * Called very early in system boot to figure out how much physical

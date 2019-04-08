@@ -52,9 +52,18 @@ void
 ram_bootstrap(void)
 {
 #if OPT_A3
+	spinlock_init(&coremap_lock);
+
 	ram_getsize(&firstpaddr, &lastpaddr);
 	size_t ramsize = lastpaddr - firstpaddr;
 	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
+
+	spinlock_acquire(&coremap_lock);
+	coremap = PADDR_TO_KVADDR(firstpaddr);
+	for (unsigned i = 0; i < npages; i++) {
+		coremap[i] = 0;
+	}
+	spinlock_release(&coremap_lock);
 #else
 	size_t ramsize;
 

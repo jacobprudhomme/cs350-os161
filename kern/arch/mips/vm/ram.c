@@ -60,13 +60,13 @@ ram_bootstrap(void)
 	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
 
 	spinlock_acquire(&coremap_lock);
-	coremap = PADDR_TO_KVADDR(firstpaddr);
+	coremap = (int *)PADDR_TO_KVADDR(firstpaddr);
 	for (unsigned i = 0; i < npages; i++) {
 		coremap[i] = 0;
 	}
 	spinlock_release(&coremap_lock);
 
-	firstpaddr = coremap + npages - MIPS_KSEG0;
+	firstpaddr = (vaddr_t)coremap + npages - MIPS_KSEG0;
 #else
 	size_t ramsize;
 

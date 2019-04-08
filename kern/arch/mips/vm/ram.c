@@ -32,6 +32,9 @@
 #include <vm.h>
 #include <mainbus.h>
 #include "opt-A3.h"
+#if OPT_A3
+#include <spinlock.h>
+#endif
 
 
 vaddr_t firstfree;   /* first free virtual address; set by start.S */

@@ -96,8 +96,21 @@ getppages(unsigned long npages)
 		unsigned i = 0;
 
 		spinlock_acquire(&coremap_lock);
-		while (coremap[i] > 0) {
-			i++;
+		while (1) {
+			while (coremap[i] > 0) {
+				i++;
+			}
+
+			int sum = 0;
+			for (unsigned j = 0; j < npages; j++) {
+				sum += coremap[i + j];
+			}
+			if (sum == 0) {
+				addr = (vaddr_t)&coremap[i] - MIPS_KSEG0;
+				break;
+			} else {
+				i += npages;
+			}
 		}
 		spinlock_release(&coremap_lock);
 	} else {

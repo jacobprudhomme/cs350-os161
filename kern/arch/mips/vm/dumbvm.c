@@ -55,6 +55,8 @@ static struct spinlock stealmem_lock = SPINLOCK_INITIALIZER;
 #if OPT_A3
 static int *coremap;
 static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
+
+static bool vm_initialized = false;
 #endif
 
 void
@@ -78,6 +80,8 @@ vm_bootstrap(void)
 			? (npages * sizeof(int)) / PAGE_SIZE
 			: ((npages * sizeof(int)) / PAGE_SIZE) + 1;
 	lo = (vaddr_t)coremap + (npages_coremap * PAGE_SIZE) - MIPS_KSEG0;
+
+	vm_initialized = true;
 #endif
 }
 
@@ -87,11 +91,21 @@ getppages(unsigned long npages)
 {
 	paddr_t addr;
 
+#if OPT_A3
+	if (vm_initialized) {
+	} else {
+		spinlock_acquire(&stealmem_lock);
+		addr = ram_stealmem(npages);
+		spinlock_release(&stealmem_lock);
+	}
+#else
 	spinlock_acquire(&stealmem_lock);
 
 	addr = ram_stealmem(npages);
 
 	spinlock_release(&stealmem_lock);
+#endif
+
 	return addr;
 }
 

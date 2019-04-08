@@ -44,7 +44,7 @@ static paddr_t lastpaddr;   /* one past end of last free physical page */
 
 #if OPT_A3
 static int *coremap;
-static struct spinlock coremap_lock;
+static struct spinlock coremap_lock = SPINLOCK_INITIALIZER;
 #endif
 
 /*
@@ -55,8 +55,6 @@ void
 ram_bootstrap(void)
 {
 #if OPT_A3
-	spinlock_init(&coremap_lock);
-
 	ram_getsize(&firstpaddr, &lastpaddr);
 	size_t ramsize = lastpaddr - firstpaddr;
 	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));

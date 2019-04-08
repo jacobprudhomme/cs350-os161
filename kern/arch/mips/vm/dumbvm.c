@@ -74,7 +74,10 @@ vm_bootstrap(void)
 	}
 	spinlock_release(&coremap_lock);
 
-	lo = (vaddr_t)coremap + npages - MIPS_KSEG0;
+	unsigned npages_coremap = (npages * sizeof(int)) % PAGE_SIZE == 0
+			? (npages * sizeof(int)) / PAGE_SIZE
+			: ((npages * sizeof(int)) / PAGE_SIZE) + 1;
+	lo = (vaddr_t)coremap + (npages_coremap * PAGE_SIZE) - MIPS_KSEG0;
 #endif
 }
 

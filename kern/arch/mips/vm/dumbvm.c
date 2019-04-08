@@ -165,6 +165,10 @@ free_kpages(vaddr_t addr)
 	while (coremap[start_page + 1] == coremap[start_page] + 1) {
 		npages++;
 	}
+
+	for (unsigned i = 0; i < npages; i++) {
+		coremap[start_page + i] = 0;
+	}
 	spinlock_release(&coremap_lock);
 #else
 	(void)addr;

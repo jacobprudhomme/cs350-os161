@@ -336,10 +336,12 @@ as_create(void)
 void
 as_destroy(struct addrspace *as)
 {
+#if OPT_A3
 	/* MAYBE HERE (should i use as_vbase... instead?) */
 	kfree((void *)PADDR_TO_KVADDR(as->as_pbase1));
 	kfree((void *)PADDR_TO_KVADDR(as->as_pbase2));
 	kfree((void *)PADDR_TO_KVADDR(as->as_stackpbase));
+#endif
 
 	kfree(as);
 }

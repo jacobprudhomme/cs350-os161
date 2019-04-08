@@ -53,6 +53,8 @@ ram_bootstrap(void)
 {
 #if OPT_A3
 	ram_getsize(&firstpaddr, &lastpaddr);
+	size_t ramsize = lastpaddr - firstpaddr;
+	unsigned npages = ramsize / (PAGE_SIZE + sizeof(int));
 #else
 	size_t ramsize;
 
